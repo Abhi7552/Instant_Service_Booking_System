@@ -55,10 +55,26 @@ const Navbar = () => {
                 {/* Desktop Menu */}
                 <div className="desktop-menu">
                     <Link to="/" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Home</Link>
-                    <Link to="/services" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Services</Link>
-                    {(!userRole || userRole === 'user' || userRole === 'admin') && <Link to="/history" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>History</Link>}
-                    {userRole === 'vendor' && <Link to="/vendor" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Dashboard</Link>}
-                    {userRole === 'admin' && <Link to="/admin" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Admin</Link>}
+
+                    {/* Show Services link for all authenticated users except vendors */}
+                    {currentUser && userRole !== 'vendor' && (
+                        <Link to="/services" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Services</Link>
+                    )}
+
+                    {/* Customer/Admin specific links */}
+                    {(userRole === 'user' || userRole === 'admin') && (
+                        <Link to="/history" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>My Bookings</Link>
+                    )}
+
+                    {/* Vendor specific links */}
+                    {userRole === 'vendor' && (
+                        <Link to="/vendor" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Vendor Dashboard</Link>
+                    )}
+
+                    {/* Admin specific links */}
+                    {userRole === 'admin' && (
+                        <Link to="/admin" style={{ color: 'var(--text-muted)', transition: 'color 0.2s' }} onMouseOver={e => e.target.style.color = 'var(--primary)'} onMouseOut={e => e.target.style.color = 'var(--text-muted)'}>Admin Panel</Link>
+                    )}
 
                     {!currentUser ? (
                         <>
@@ -71,7 +87,12 @@ const Navbar = () => {
                         </>
                     ) : (
                         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{currentUser.email}</span>
+                            <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                {userRole === 'admin' && 'Admin: '}
+                                {userRole === 'vendor' && 'Vendor: '}
+                                {userRole === 'user' && 'Customer: '}
+                                {currentUser.email}
+                            </span>
                             <button onClick={logout} className="btn" style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                                 Logout
                             </button>
@@ -104,10 +125,27 @@ const Navbar = () => {
                     >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
                             <Link to="/" onClick={() => setIsOpen(false)}>Home</Link>
-                            <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
-                            {(!userRole || userRole === 'user' || userRole === 'admin') && <Link to="/history" onClick={() => setIsOpen(false)}>History</Link>}
-                            {userRole === 'vendor' && <Link to="/vendor" onClick={() => setIsOpen(false)}>Dashboard</Link>}
-                            {userRole === 'admin' && <Link to="/admin" onClick={() => setIsOpen(false)}>Admin</Link>}
+
+                            {/* Show Services link for all authenticated users except vendors */}
+                            {currentUser && userRole !== 'vendor' && (
+                                <Link to="/services" onClick={() => setIsOpen(false)}>Services</Link>
+                            )}
+
+                            {/* Customer/Admin specific links */}
+                            {(userRole === 'user' || userRole === 'admin') && (
+                                <Link to="/history" onClick={() => setIsOpen(false)}>My Bookings</Link>
+                            )}
+
+                            {/* Vendor specific links */}
+                            {userRole === 'vendor' && (
+                                <Link to="/vendor" onClick={() => setIsOpen(false)}>Vendor Dashboard</Link>
+                            )}
+
+                            {/* Admin specific links */}
+                            {userRole === 'admin' && (
+                                <Link to="/admin" onClick={() => setIsOpen(false)}>Admin Panel</Link>
+                            )}
+
                             {!currentUser ? (
                                 <div style={{ display: 'flex', gap: '0.5rem', flexDirection: 'column' }}>
                                     <Link to="/login" onClick={() => setIsOpen(false)} style={{ color: 'var(--primary)' }}>Login</Link>
@@ -115,7 +153,12 @@ const Navbar = () => {
                                 </div>
                             ) : (
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.5rem' }}>
-                                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>{currentUser.email}</span>
+                                    <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                                        {userRole === 'admin' && 'Admin: '}
+                                        {userRole === 'vendor' && 'Vendor: '}
+                                        {userRole === 'user' && 'Customer: '}
+                                        {currentUser.email}
+                                    </span>
                                     <button onClick={() => { logout(); setIsOpen(false); }} className="btn" style={{ padding: '0.5rem', fontSize: '0.9rem', background: 'rgba(239, 68, 68, 0.1)', color: '#f87171', border: 'none', marginLeft: 'auto' }}>
                                         Logout
                                     </button>

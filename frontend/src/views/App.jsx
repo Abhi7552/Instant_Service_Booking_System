@@ -12,6 +12,7 @@ import History from './pages/History';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VendorDashboard from './pages/vendor/VendorDashboard';
+import VendorProfileSetup from './pages/vendor/VendorProfileSetup';
 
 // Wrapper to conditionally render Navbar
 const Layout = ({ children }) => {
@@ -30,17 +31,30 @@ function App() {
     <Router>
       <Layout>
         <Routes>
+          {/* Public Routes - No Authentication Required */}
           <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/services" element={<Services />} />
+          <Route path="/login" element={
+            <ProtectedRoute requireAuth={false}>
+              <Login />
+            </ProtectedRoute>
+          } />
+          <Route path="/register" element={
+            <ProtectedRoute requireAuth={false}>
+              <Register />
+            </ProtectedRoute>
+          } />
+
+          {/* Customer Routes - User Role Required */}
+          <Route path="/services" element={
+            <ProtectedRoute allowedRoles={['user', 'admin']}>
+              <Services />
+            </ProtectedRoute>
+          } />
           <Route path="/choose-vendor/:serviceId" element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
               <ChooseVendor />
             </ProtectedRoute>
           } />
-
-          {/* User Module Routes */}
           <Route path="/book/:serviceId/:vendorId" element={
             <ProtectedRoute allowedRoles={['user', 'admin']}>
               <BookService />
@@ -57,17 +71,41 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Vendor Module Routes */}
+          {/* Vendor Routes - Vendor Role Required */}
+          <Route path="/vendor/setup" element={
+            <ProtectedRoute allowedRoles={['vendor']}>
+              <VendorProfileSetup />
+            </ProtectedRoute>
+          } />
           <Route path="/vendor" element={
-            <ProtectedRoute allowedRoles={['vendor', 'admin']}>
+            <ProtectedRoute allowedRoles={['vendor']}>
               <VendorDashboard />
             </ProtectedRoute>
           } />
 
-          {/* Admin Module Routes */}
+          {/* Admin Routes - Admin Role Required */}
           <Route path="/admin" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <AdminDashboard />
+            </ProtectedRoute>
+          } />
+
+          {/* Catch-all route for unauthorized access */}
+          <Route path="*" element={
+            <ProtectedRoute>
+              <div style={{
+                minHeight: '100vh',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'radial-gradient(circle at top right, #1e293b, #0f172a)',
+                color: 'white'
+              }}>
+                <div style={{ textAlign: 'center' }}>
+                  <h1>Access Denied</h1>
+                  <p>You don't have permission to access this page.</p>
+                </div>
+              </div>
             </ProtectedRoute>
           } />
         </Routes>

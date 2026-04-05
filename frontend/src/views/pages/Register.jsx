@@ -15,7 +15,7 @@ const Register = () => {
 
     if (currentUser) {
         if (userRole === 'admin') return <Navigate to="/admin" />;
-        if (userRole === 'vendor') return <Navigate to="/vendor" />;
+        if (userRole === 'vendor') return <Navigate to="/vendor/setup" />;
         return <Navigate to="/services" />;
     }
 

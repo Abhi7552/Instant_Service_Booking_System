@@ -148,3 +148,64 @@ export const setProviderAvailability = async (providerId, available) => {
     }
 };
 
+/**
+ * Creates a new provider profile in the 'providers' collection.
+ * 
+ * @param {Object} providerData - { userId, name, phone, services, price, etc. }
+ * @returns {Promise<string>} The ID of the newly created provider document.
+ */
+export const createProvider = async (providerData) => {
+    try {
+        const docRef = await addDoc(collection(db, 'providers'), {
+            ...providerData,
+            status: 'unavailable', // Initially unavailable until they go live
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp()
+        });
+        console.log("Provider created with ID: ", docRef.id);
+        return docRef.id;
+    } catch (e) {
+        console.error("Error creating provider: ", e);
+        throw e;
+    }
+};
+
+/**
+ * Gets provider profile by userId.
+ * 
+ * @param {string} userId
+ * @returns {Promise<Object|null>} Provider data or null if not found
+ */
+export const getProviderByUserId = async (userId) => {
+    try {
+        const q = query(collection(db, 'providers'), where('userId', '==', userId));
+        const querySnapshot = await getDocs(q);
+        if (!querySnapshot.empty) {
+            const doc = querySnapshot.docs[0];
+            return { id: doc.id, ...doc.data() };
+        }
+        return null;
+    } catch (e) {
+        console.error('Error fetching provider: ', e);
+        return null;
+    }
+};
+
+/**
+ * Updates provider profile.
+ * 
+ * @param {string} providerId
+ * @param {Object} updateData
+ */
+export const updateProvider = async (providerId, updateData) => {
+    try {
+        await updateDoc(doc(db, 'providers', providerId), {
+            ...updateData,
+            updatedAt: serverTimestamp()
+        });
+    } catch (e) {
+        console.error('Error updating provider: ', e);
+        throw e;
+    }
+};
+
