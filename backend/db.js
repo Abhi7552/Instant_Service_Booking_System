@@ -8,9 +8,6 @@ const databaseName = MONGO_URI.split('/').pop().split('?')[0] || 'unknown';
 
 const connectDB = async () => {
   try {
-    console.log(`Connecting to MongoDB database: ${databaseName}`);
-    console.log(`Using MongoDB URI: ${MONGO_URI}`);
-
     await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
